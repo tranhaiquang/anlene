@@ -1,13 +1,16 @@
 import React, { useEffect } from 'react'
 import { Text, View, Image, TouchableOpacity, } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient';
+import { StackScreenProps } from "react-navigation/stack";
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import MaskedView from '@react-native-masked-view/masked-view';
+import { RootStackParamList } from '../navigation/types';
 
+type Props = StackScreenProps<RootStackParamList, "WelcomeScreen">;
 SplashScreen.preventAutoHideAsync();
 
-export default function WelcomeScreen() {
+export default function WelcomeScreen({ navigation, route }: Props) {
     const [loaded, error] = useFonts({
         'SVN-Gotham': require('../assets/fonts/SVN-Gotham Regular.otf'),
     });
@@ -32,7 +35,7 @@ export default function WelcomeScreen() {
         >
             {/* Top Bar */}
             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", position: "relative" }}>
-                <Text style={{ alignItems: "center", color: "white", fontSize: 14 }}>Trang 1/6</Text>
+                <Text style={{ alignItems: "center", color: "white", fontSize: 14, fontFamily: "SVN-Gotham" }}>{"<"} Trang {route.params.pageNumber}/6 {">"}</Text>
                 <Image style={{ resizeMode: "contain", position: "absolute", right: 20 }} source={require('../assets/anlene-icon.png')}></Image>
             </View>
 
@@ -74,7 +77,7 @@ export default function WelcomeScreen() {
                         height: '12%',
                     }}
                 />
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => { navigation.navigate("Test") }}>
                     <Image style={{ position: 'absolute', left: "20%", bottom: 0 }} source={require('../assets/kiem-tra-ngay-btn.png')}></Image>
                 </TouchableOpacity>
             </View>

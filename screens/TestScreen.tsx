@@ -5,10 +5,14 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import MaskedView from '@react-native-masked-view/masked-view';
 import AntDesign from 'react-native-vector-icons/AntDesign'
+import { StackScreenProps } from "react-navigation/stack";
+import { RootStackParamList } from '../navigation/types';
+
+type Props = StackScreenProps<RootStackParamList, "WelcomeScreen">;
 
 SplashScreen.preventAutoHideAsync();
 
-export default function TestScreen() {
+export default function TestScreen({ navigation, route }: Props) {
     const [loaded, error] = useFonts({
         'SVN-Gotham': require('../assets/fonts/SVN-Gotham Regular.otf'),
     });
@@ -63,7 +67,6 @@ export default function TestScreen() {
     const handleSelection = (choice: "yes" | "no") => {
         setTimeout(() => {
             let newProgress = [...progress];
-            // Update progress with a checkmark or cross
             newProgress[currentStep] = {
                 context: choice,
                 title: newProgress[currentStep].title
@@ -81,11 +84,28 @@ export default function TestScreen() {
             }
 
             setProgress(newProgress);
-            
+
         }, 500);
     };
 
-
+    const handleBack = () => {
+        let newProgress = [...progress];
+        newProgress[currentStep] = {
+            context: (currentStep + 1).toString(),
+            title: newProgress[currentStep].title
+        };
+        if (currentStep < exercises.length - 1) {
+            newProgress[currentStep - 1] = {
+                context: "waiting",
+                title: newProgress[currentStep + 1].title
+            };
+            setBorderColor("");
+            setYesBtnClick(false);
+            setNoBtnClick(false);
+        }
+        setCurrentStep(currentStep - 1);
+        setProgress(newProgress);
+    }
     useEffect(() => {
         if (loaded || error) {
             SplashScreen.hideAsync();
@@ -107,7 +127,17 @@ export default function TestScreen() {
 
             {/* Top Bar */}
             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", position: "relative" }}>
-                <Text style={{ alignItems: "center", color: "white", fontSize: 14 }}>Trang 1/6</Text>
+                <TouchableOpacity onPress={() => {
+                    if (currentStep == 0)
+                        navigation.navigate("Welcome")
+                    else
+                        handleBack()
+                }} style={{ position: "absolute", right: 190 }}>
+                    <AntDesign name="left" size={24} color="white"></AntDesign>
+                </TouchableOpacity>
+                <Text style={{ color: "white", fontSize: 14, fontFamily: "SVN-Gotham", textAlign: "center" }}>
+                    {"<"} Trang {route.params.pageNumber}/6 {">"}
+                </Text>
             </View>
 
             <View style={{ marginTop: 10, marginBottom: 10 }}>
