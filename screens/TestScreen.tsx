@@ -5,20 +5,21 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import MaskedView from '@react-native-masked-view/masked-view';
 import AntDesign from 'react-native-vector-icons/AntDesign'
-import { StackScreenProps } from "react-navigation/stack";
-import { RootStackParamList } from '../navigation/types';
-
-type Props = StackScreenProps<RootStackParamList, "WelcomeScreen">;
+import Entypo from 'react-native-vector-icons/Entypo'
+import { StackScreenProps } from "@react-navigation/stack";
+import { TestScreenProps } from '../navigation/types';
+import Modal from 'react-native-modal';
 
 SplashScreen.preventAutoHideAsync();
 
-export default function TestScreen({ navigation, route }: Props) {
+const TestScreen: React.FC<TestScreenProps> = ({ navigation, route }) => {
     const [loaded, error] = useFonts({
         'SVN-Gotham': require('../assets/fonts/SVN-Gotham Regular.otf'),
     });
     const [isYesBtnClicked, setYesBtnClick] = useState(false)
     const [isNoBtnClicked, setNoBtnClick] = useState(false)
     const [borderColor, setBorderColor] = useState("")
+    const [isModalVisible, setModalVisible] = useState(false);
 
     const exercises = [
         {
@@ -63,6 +64,13 @@ export default function TestScreen({ navigation, route }: Props) {
             title: "Đề kháng"
         }]);
     const isSubmitButtonDisabled = currentStep === exercises.length - 1 && (isNoBtnClicked || isYesBtnClicked);
+
+    const handleNavigateToSubmitScreen = () => {
+        setModalVisible(false)
+        const count = progress.filter(item => item.context === "no").length; // count number of exercises the user can't do
+        const theme = count > 1 ? "gray" : count === 1 ? "yellow" : "green";
+        navigation.navigate("SubmitScreen", { pageNumber: 3, theme: theme });
+    }
 
     const handleSelection = (choice: "yes" | "no") => {
         setTimeout(() => {
@@ -129,11 +137,14 @@ export default function TestScreen({ navigation, route }: Props) {
             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", position: "relative" }}>
                 <TouchableOpacity onPress={() => {
                     if (currentStep == 0)
-                        navigation.navigate("Welcome")
+                        navigation.navigate("WelcomeScreen", { pageNumber: 1 })
                     else
                         handleBack()
                 }} style={{ position: "absolute", right: 190 }}>
                     <AntDesign name="left" size={24} color="white"></AntDesign>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => { navigation.navigate("WelcomeScreen", { pageNumber: 1 }) }} style={{ position: "absolute", left: 190 }}>
+                    <Entypo name="home" color="white" size={24}></Entypo>
                 </TouchableOpacity>
                 <Text style={{ color: "white", fontSize: 14, fontFamily: "SVN-Gotham", textAlign: "center" }}>
                     {"<"} Trang {route.params.pageNumber}/6 {">"}
@@ -143,6 +154,7 @@ export default function TestScreen({ navigation, route }: Props) {
             <View style={{ marginTop: 10, marginBottom: 10 }}>
                 <Text style={{ textAlign: "center", fontSize: 14, fontFamily: "SVN-Gotham", color: "white", fontWeight: "bold" }}>KIỂM TRA CƠ - XƯƠNG - KHỚP</Text>
             </View>
+
             {/* Progress Bar */}
             <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", backgroundColor: "rgba(255,255,255,0.3)", padding: 12, borderRadius: 12, marginBottom: 10 }}>
                 {progress.map((status, index) => (
@@ -172,13 +184,25 @@ export default function TestScreen({ navigation, route }: Props) {
             </View>
 
             <View style={{ marginTop: 10, paddingHorizontal: 18 }}>
-
+                <Modal isVisible={isModalVisible} onBackdropPress={() => setModalVisible(false)}>
+                    <View style={{ justifyContent: "center", alignItems: "center", backgroundColor: "white", padding: 20, borderRadius: 10 }}>
+                        <Text style={{ color: "green", fontFamily: "SVN-Gotham", fontSize: 20, fontWeight: "bold" }}>CẢM ƠN</Text>
+                        <Text style={{ fontFamily: "SVN-Gotham", textAlign: "center", marginTop: 10 }}>Bạn đã tham gia bài kiểm tra sức khoẻ. Hãy tiếp tục để có thể nhận kết quả kiểm tra sức khoẻ của bạn.</Text>
+                        <View style={{ flexDirection: "row", justifyContent: "center", marginTop: 10, gap: 30 }}>
+                            <TouchableOpacity onPress={() => { setModalVisible(false) }} style={{ width: 120, height: 40, borderRadius: 20, borderColor: "rgb(183,0,2)", borderWidth: 1, backgroundColor: "white", justifyContent: "center", alignItems: "center" }}>
+                                <Text style={{ color: "rgb(183,0,2)", fontFamily: "SVN-Gotham" }}>HỦY</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={handleNavigateToSubmitScreen} style={{ width: 120, height: 40, borderRadius: 20, backgroundColor: "rgb(183,0,2)", justifyContent: "center", alignItems: "center" }}>
+                                <Text style={{ color: "white", fontFamily: "SVN-Gotham" }}>TIẾP TỤC</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
                 <MaskedView maskElement={<Text style={{ textAlign: "center", fontSize: 18, fontFamily: "SVN-Gotham", fontWeight: "bold" }}>{exercises[currentStep].title}</Text>}>
                     <LinearGradient
                         colors={['rgba(186, 135, 44, 1)', 'rgba(232, 226, 118, 1)', 'rgba(225, 215, 112, 1)', 'rgba(136, 80, 33, 1)']}
                         start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 1 }}
-                    >
+                        end={{ x: 1, y: 1 }}>
                         <Text style={{ textAlign: "center", fontSize: 18, fontFamily: "SVN-Gotham", opacity: 0, fontWeight: "bold", marginBottom: 10 }}>KIỂM TRA CƠ</Text>
 
                     </LinearGradient>
@@ -196,10 +220,11 @@ export default function TestScreen({ navigation, route }: Props) {
                     </View>
                 </View>
                 <Text style={{ textAlign: "center", fontSize: 15, color: "white", fontFamily: "SVN-Gotham", marginHorizontal: 30, marginTop: 10 }}>{exercises[currentStep].description}</Text>
-            </View>
+            </View >
 
             {/* Button Section*/}
-            <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 30, }}>
+            < View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 30, }
+            }>
                 <TouchableOpacity onPress={() => {
                     setYesBtnClick(true)
                     setNoBtnClick(false)
@@ -221,22 +246,24 @@ export default function TestScreen({ navigation, route }: Props) {
             </View >
 
             {/* Submit Button Section*/}
-            <View style={{ marginTop: 30 }}>
-                <TouchableOpacity disabled={currentStep < exercises.length - 1 ? true : false} style={{ width: 140, height: 40, borderRadius: 20, backgroundColor: currentStep === exercises.length - 1 && (isNoBtnClicked || isYesBtnClicked) ? 'rgba(183, 0, 2, 1)' : "gray", justifyContent: "center", alignItems: "center" }}>
+            < View style={{ marginTop: 30 }}>
+                <TouchableOpacity onPress={() => { setModalVisible(true) }} disabled={currentStep < exercises.length - 1 ? true : false} style={{ width: 140, height: 40, borderRadius: 20, backgroundColor: currentStep === exercises.length - 1 && (isNoBtnClicked || isYesBtnClicked) ? 'rgba(183, 0, 2, 1)' : "gray", justifyContent: "center", alignItems: "center" }}>
                     <Text style={{ color: "white", fontFamily: "SVN-Gotham" }}>Xác nhận</Text>
                 </TouchableOpacity>
             </View >
 
             {/*Bottom Text Section*/}
-            <View style={{ marginTop: 10, paddingHorizontal: 10 }}>
+            < View style={{ marginTop: 10, paddingHorizontal: 10 }}>
                 <Text style={{ fontFamily: "SVN-Gotham", fontSize: 10, color: "white", fontStyle: "italic", textAlign: "center", }}>*Lưu ý: Hãy dừng bài tập ngay nếu cảm thấy không thoải mái.</Text>
                 <View style={{ paddingHorizontal: 50 }}>
                     <Text style={{ fontFamily: "SVN-Gotham", fontSize: 10, color: "white", fontStyle: "italic", textAlign: "justify" }}>Đảm bảo vị trí tập an toàn để không té ngã.</Text>
                 </View>
-            </View>
+            </View >
 
         </LinearGradient >
 
 
     )
 }
+
+export default TestScreen

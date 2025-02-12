@@ -1,16 +1,16 @@
 import React, { useEffect } from 'react'
 import { Text, View, Image, TouchableOpacity, } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient';
-import { StackScreenProps } from "react-navigation/stack";
+import { StackScreenProps } from "@react-navigation/stack";
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { RootStackParamList } from '../navigation/types';
-
+import { WelcomeScreenProps } from '../navigation/types';
 type Props = StackScreenProps<RootStackParamList, "WelcomeScreen">;
 SplashScreen.preventAutoHideAsync();
 
-export default function WelcomeScreen({ navigation, route }: Props) {
+const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ navigation, route }) => {
     const [loaded, error] = useFonts({
         'SVN-Gotham': require('../assets/fonts/SVN-Gotham Regular.otf'),
     });
@@ -31,12 +31,12 @@ export default function WelcomeScreen({ navigation, route }: Props) {
             locations={[0.1, 0.2, 0.3, 0.8, 0.9]}
             start={{ x: 0.5, y: 0 }}
             end={{ x: 0.5, y: 1 }}
-            style={{ flex: 1, paddingVertical: 40, }}
-        >
+            style={{ flex: 1, paddingVertical: 40, }}>
+
             {/* Top Bar */}
             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", position: "relative" }}>
                 <Text style={{ alignItems: "center", color: "white", fontSize: 14, fontFamily: "SVN-Gotham" }}>{"<"} Trang {route.params.pageNumber}/6 {">"}</Text>
-                <Image style={{ resizeMode: "contain", position: "absolute", right: 20 }} source={require('../assets/anlene-icon.png')}></Image>
+                <Image style={{ width: 80, resizeMode: "contain", position: "absolute", right: 20 }} source={require('../assets/anlene-icon.png')}></Image>
             </View>
 
             <View style={{ marginTop: 20, paddingHorizontal: 18 }}>
@@ -77,7 +77,7 @@ export default function WelcomeScreen({ navigation, route }: Props) {
                         height: '12%',
                     }}
                 />
-                <TouchableOpacity onPress={() => { navigation.navigate("Test") }}>
+                <TouchableOpacity onPress={() => { navigation.navigate("TestScreen", { pageNumber: 1 }); }}>
                     <Image style={{ position: 'absolute', left: "20%", bottom: 0 }} source={require('../assets/kiem-tra-ngay-btn.png')}></Image>
                 </TouchableOpacity>
             </View>
@@ -95,3 +95,4 @@ export default function WelcomeScreen({ navigation, route }: Props) {
 
     )
 }
+export default WelcomeScreen;
