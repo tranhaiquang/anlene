@@ -6,7 +6,6 @@ import * as SplashScreen from 'expo-splash-screen';
 import MaskedView from '@react-native-masked-view/masked-view';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import Entypo from 'react-native-vector-icons/Entypo'
-import { StackScreenProps } from "@react-navigation/stack";
 import { TestScreenProps } from '../navigation/types';
 import Modal from 'react-native-modal';
 
@@ -26,21 +25,25 @@ const TestScreen: React.FC<TestScreenProps> = ({ navigation, route }) => {
             title: "KIỂM TRA CƠ",
             description: "Thẳng lưng trước ghế, đứng lên ngồi xuống 5 lần từ 6-10 giây",
             image: require("../assets/muscle-check-img.png"),
+            options: ["Được", "Không được"]
         },
         {
             title: "KIỂM TRA XƯƠNG",
             description: "Duỗi 2 tay về phía trước, từ từ cúi xuống để chạm vào mũi bàn chân",
             image: require("../assets/bone-check-img.png"),
+            options: ["Được", "Không được"]
         },
         {
             title: "KIỂM TRA KHỚP",
             description: "Đứng rộng chân, lưng thẳng đứng, tay đưa ra sau và đan vào nhau",
             image: require("../assets/joint-check-img.png"),
+            options: ["Được", "Không được"]
         },
         {
             title: "KIỂM TRA SỨC ĐỀ KHÁNG",
             description: "6 tháng gần đây, bạn có gặp các triệu chứng: ho, sổ mũi, cảm sốt?",
             image: require("../assets/resistance-check-img.png"),
+            options: ["Hiếm khi", "Nhiều lần"]
         },
 
     ]
@@ -63,7 +66,6 @@ const TestScreen: React.FC<TestScreenProps> = ({ navigation, route }) => {
             context: "4",
             title: "Đề kháng"
         }]);
-    const isSubmitButtonDisabled = currentStep === exercises.length - 1 && (isNoBtnClicked || isYesBtnClicked);
 
     const handleNavigateToSubmitScreen = () => {
         setModalVisible(false)
@@ -71,7 +73,6 @@ const TestScreen: React.FC<TestScreenProps> = ({ navigation, route }) => {
         const theme = count > 1 ? "gray" : count === 1 ? "yellow" : "green";
         navigation.navigate("SubmitScreen", { pageNumber: 3, theme: theme });
     }
-
     const handleSelection = (choice: "yes" | "no") => {
         setTimeout(() => {
             let newProgress = [...progress];
@@ -232,7 +233,7 @@ const TestScreen: React.FC<TestScreenProps> = ({ navigation, route }) => {
                     handleSelection("yes")
                 }} style={{ width: 110, height: 120, borderWidth: isYesBtnClicked == true ? 2 : 0, borderColor: isYesBtnClicked == true ? "yellow" : "", borderRadius: 10, backgroundColor: "rgba(255,255,255,0.3)", justifyContent: "center", alignItems: "center", marginRight: 20 }}>
                     <Image source={require('../assets/smile-icon.png')}></Image>
-                    <Text style={{ color: "white", fontFamily: "SVN-Gotham" }}>Được</Text>
+                    <Text style={{ color: "white", fontFamily: "SVN-Gotham", marginTop: 5 }}>{exercises[currentStep].options[0]}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => {
                     setNoBtnClick(true)
@@ -241,13 +242,13 @@ const TestScreen: React.FC<TestScreenProps> = ({ navigation, route }) => {
                     handleSelection("no")
                 }} style={{ width: 110, height: 120, borderWidth: isNoBtnClicked == true ? 2 : 0, borderColor: isNoBtnClicked == true ? "yellow" : "", borderRadius: 10, backgroundColor: "rgba(255,255,255,0.3)", justifyContent: "center", alignItems: "center" }}>
                     <Image source={require('../assets/sad-icon.png')}></Image>
-                    <Text style={{ color: "white", fontFamily: "SVN-Gotham" }}>Không được</Text>
+                    <Text style={{ color: "white", fontFamily: "SVN-Gotham", marginTop: 5 }}>{exercises[currentStep].options[1]}</Text>
                 </TouchableOpacity>
             </View >
 
             {/* Submit Button Section*/}
             < View style={{ marginTop: 30 }}>
-                <TouchableOpacity onPress={() => { setModalVisible(true) }} disabled={currentStep < exercises.length - 1 ? true : false} style={{ width: 140, height: 40, borderRadius: 20, backgroundColor: currentStep === exercises.length - 1 && (isNoBtnClicked || isYesBtnClicked) ? 'rgba(183, 0, 2, 1)' : "gray", justifyContent: "center", alignItems: "center" }}>
+                <TouchableOpacity disabled={currentStep < 3 ? true : false} onPress={() => { setModalVisible(true) }} style={{ width: 140, height: 40, borderRadius: 20, backgroundColor: currentStep === exercises.length - 1 && (isNoBtnClicked || isYesBtnClicked) ? 'rgba(183, 0, 2, 1)' : "gray", justifyContent: "center", alignItems: "center" }}>
                     <Text style={{ color: "white", fontFamily: "SVN-Gotham" }}>Xác nhận</Text>
                 </TouchableOpacity>
             </View >

@@ -6,9 +6,9 @@ import * as SplashScreen from 'expo-splash-screen';
 import MaskedView from '@react-native-masked-view/masked-view';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import Entypo from 'react-native-vector-icons/Entypo'
-import { StackScreenProps } from "@react-navigation/stack";
 import { SubmitScreenProps } from '../navigation/types';
 import Checkbox from 'expo-checkbox';
+import Modal from 'react-native-modal';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -16,16 +16,14 @@ const SubmitScreen: React.FC<SubmitScreenProps> = ({ navigation, route }) => {
     const [loaded, error] = useFonts({
         'SVN-Gotham': require('../assets/fonts/SVN-Gotham Regular.otf'),
     });
-    const [isYesBtnClicked, setYesBtnClick] = useState(false)
-    const [isNoBtnClicked, setNoBtnClick] = useState(false)
-    const [borderColor, setBorderColor] = useState("")
+
     const [checked, setChecked] = useState(false);
     const [name, setName] = useState("")
     const [phone, setPhone] = useState("")
     const [email, setEmail] = useState("")
     const [nameInputWarning, setNameInputWarning] = useState("")
     const [phoneInputWarning, setPhoneInputWarning] = useState("")
-
+    const [isModalVisible, setModalVisible] = useState(false)
     const themes = [
         {
             name: "green",
@@ -53,89 +51,6 @@ const SubmitScreen: React.FC<SubmitScreenProps> = ({ navigation, route }) => {
         }
     ]
     const currentTheme = themes.find(t => t.name === route.params.theme)
-    const exercises = [
-        {
-            title: "KIỂM TRA CƠ",
-            description: "Thẳng lưng trước ghế, đứng lên ngồi xuống 5 lần từ 6-10 giây",
-            image: require("../assets/muscle-check-img.png"),
-        },
-        {
-            title: "KIỂM TRA XƯƠNG",
-            description: "Duỗi 2 tay về phía trước, từ từ cúi xuống để chạm vào mũi bàn chân",
-            image: require("../assets/bone-check-img.png"),
-        },
-        {
-            title: "KIỂM TRA KHỚP",
-            description: "Đứng rộng chân, lưng thẳng đứng, tay đưa ra sau và đan vào nhau",
-            image: require("../assets/joint-check-img.png"),
-        },
-        {
-            title: "KIỂM TRA SỨC ĐỀ KHÁNG",
-            description: "6 tháng gần đây, bạn có gặp các triệu chứng: ho, sổ mũi, cảm sốt?",
-            image: require("../assets/resistance-check-img.png"),
-        },
-    ]
-    const [currentStep, setCurrentStep] = useState(0);
-    const [progress, setProgress] = useState([
-        {
-            context: "waiting",
-            title: "Cơ"
-        },
-        {
-            context: "2",
-            title: "Xương"
-        },
-        {
-            context: "3",
-            title: "Khớp"
-        },
-        {
-            context: "4",
-            title: "Đề kháng"
-        }]);
-    const isSubmitButtonDisabled = currentStep === exercises.length - 1 && (isNoBtnClicked || isYesBtnClicked);
-
-    const handleSelection = (choice: "yes" | "no") => {
-        setTimeout(() => {
-            let newProgress = [...progress];
-            newProgress[currentStep] = {
-                context: choice,
-                title: newProgress[currentStep].title
-            };
-
-            if (currentStep < exercises.length - 1) {
-                newProgress[currentStep + 1] = {
-                    context: "waiting",
-                    title: newProgress[currentStep + 1].title
-                };
-                setCurrentStep(currentStep + 1);
-                setBorderColor("");
-                setYesBtnClick(false);
-                setNoBtnClick(false);
-            }
-
-            setProgress(newProgress);
-
-        }, 500);
-    };
-    const handleBack = () => {
-        let newProgress = [...progress];
-        newProgress[currentStep] = {
-            context: (currentStep + 1).toString(),
-            title: newProgress[currentStep].title
-        };
-        if (currentStep < exercises.length - 1) {
-            newProgress[currentStep - 1] = {
-                context: "waiting",
-                title: newProgress[currentStep + 1].title
-            };
-            setBorderColor("");
-            setYesBtnClick(false);
-            setNoBtnClick(false);
-        }
-        setCurrentStep(currentStep - 1);
-        setProgress(newProgress);
-    }
 
     const validateNameInput = (text: string) => {
         setName(text);
@@ -177,20 +92,16 @@ const SubmitScreen: React.FC<SubmitScreenProps> = ({ navigation, route }) => {
 
                     {/* Top Bar */}
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", position: "relative" }}>
-                        <TouchableOpacity onPress={() => {
-                            if (currentStep == 0)
-                                navigation.navigate("TestScreen", { pageNumber: 2 })
-                            else
-                                handleBack()
-                        }} style={{ position: "absolute", right: 190 }}>
+                        <TouchableOpacity onPress={() => { navigation.navigate("TestScreen", { pageNumber: 2 }) }} style={{ position: "absolute", right: 190 }}>
                             <AntDesign name="left" size={24} color="white"></AntDesign>
                         </TouchableOpacity>
                         <Text style={{ color: "white", fontSize: 14, fontFamily: "SVN-Gotham", textAlign: "center" }}>
                             {"<"} Trang {route.params.pageNumber}/6 {">"}
                         </Text>
-                        <TouchableOpacity onPress={() => { navigation.navigate("WelcomeScreen", { pageNumber: 1 }) }} style={{ position: "absolute", left: 190 }}>
+                        <TouchableOpacity onPress={() => { setModalVisible(true) }} style={{ position: "absolute", left: 190 }}>
                             <Entypo name="home" color="white" size={24}></Entypo>
                         </TouchableOpacity>
+
                     </View>
 
                     <View style={{ marginTop: 10, marginBottom: 10 }}>
@@ -199,7 +110,23 @@ const SubmitScreen: React.FC<SubmitScreenProps> = ({ navigation, route }) => {
 
                     {/* Text Section*/}
                     <View style={{ marginTop: 10, }}>
-
+                        <Modal isVisible={isModalVisible} onBackdropPress={() => setModalVisible(false)}>
+                            <View style={{ justifyContent: "center", alignItems: "center", backgroundColor: "white", padding: 20, borderRadius: 10 }}>
+                                <Text style={{ color: "green", fontFamily: "SVN-Gotham", fontSize: 20, fontWeight: "bold" }}>THÔNG BÁO!</Text>
+                                <Text style={{ fontFamily: "SVN-Gotham", textAlign: "center", marginTop: 10 }}>Bạn có muốn huỷ bỏ kết quả kiểm tra sức khoẻ trước đó không?</Text>
+                                <View style={{ flexDirection: "row", justifyContent: "center", marginTop: 10, gap: 30 }}>
+                                    <TouchableOpacity onPress={() => { setModalVisible(false) }} style={{ width: 120, height: 40, borderRadius: 20, borderColor: "rgb(183,0,2)", borderWidth: 1, backgroundColor: "white", justifyContent: "center", alignItems: "center" }}>
+                                        <Text style={{ color: "rgb(183,0,2)", fontFamily: "SVN-Gotham" }}>HỦY</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => {
+                                        setModalVisible(false)
+                                        navigation.navigate("WelcomeScreen", { pageNumber: 1 })
+                                    }} style={{ width: 120, height: 40, borderRadius: 20, backgroundColor: "rgb(183,0,2)", justifyContent: "center", alignItems: "center" }}>
+                                        <Text style={{ color: "white", fontFamily: "SVN-Gotham" }}>ĐỒNG Ý</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </Modal>
                         <MaskedView maskElement={<Text style={{ textAlign: "center", fontSize: 13, fontFamily: "SVN-Gotham", fontWeight: "bold" }}>HOÀN THÀNH BÀI KIỂM TRA</Text>}>
                             <LinearGradient
                                 colors={currentTheme?.headerTextColor}
@@ -251,7 +178,7 @@ const SubmitScreen: React.FC<SubmitScreenProps> = ({ navigation, route }) => {
 
                     {/* Submit Button Section*/}
                     <View style={{ marginTop: 20 }}>
-                        <TouchableOpacity disabled={!name || !phone || !checked} style={{ width: 140, height: 40, borderRadius: 20, backgroundColor: name && phone && checked ? 'rgba(183, 0, 2, 1)' : "gray", justifyContent: "center", alignItems: "center" }}>
+                        <TouchableOpacity onPress={() => { navigation.navigate("PromoScreen", { pageNumber: 4, theme: "green" }) }} disabled={!name || !phone || !checked} style={{ width: 140, height: 40, borderRadius: 20, backgroundColor: name && phone && checked ? 'rgba(183, 0, 2, 1)' : "gray", justifyContent: "center", alignItems: "center" }}>
                             <Text style={{ color: "white", fontFamily: "SVN-Gotham" }}>HOÀN THÀNH</Text>
                         </TouchableOpacity>
                     </View >
