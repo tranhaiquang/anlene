@@ -84,7 +84,7 @@ const PromoScreen: React.FC<PromoScreenProps> = ({ navigation, route }) => {
                     {/* Top Bar */}
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", position: "relative" }}>
                         <TouchableOpacity onPress={() => {
-                            navigation.navigate("TestScreen", { pageNumber: 2 })
+                            navigation.goBack()
                         }} style={{ position: "absolute", right: 190 }}>
                             <AntDesign name="left" size={24} color="white"></AntDesign>
                         </TouchableOpacity>
@@ -96,8 +96,9 @@ const PromoScreen: React.FC<PromoScreenProps> = ({ navigation, route }) => {
                         </TouchableOpacity>
                     </View>
 
-                    <View style={{ marginTop: 10, marginBottom: 10 }}>
-                        <Image source={require("../assets/anlene-icon.png")}></Image>
+                    {/* Icon */}
+                    <View style={{ marginTop: 10, }}>
+                        <Image resizeMode='contain' style={{ height: 40, width: 120 }} source={require('../assets/anlene-icon.png')}></Image>
                     </View>
 
                     {/* Main Section*/}
@@ -115,13 +116,13 @@ const PromoScreen: React.FC<PromoScreenProps> = ({ navigation, route }) => {
 
                         {/* Body Text */}
                         <Text style={{ textAlign: "center", fontSize: 14, color: "white", fontFamily: "SVN-Gotham", marginTop: 10 }}>{currentTheme?.bodyText}</Text>
-                        <Image resizeMode="contain" style={{ alignSelf: "center", width: 340 }} source={require("../assets/group-img-green.png")}></Image>
+                        <Image resizeMode="contain" style={{ alignSelf: "center", height: 140, width: 340 }} source={require("../assets/group-img-green.png")}></Image>
 
                         {/* Mini Text*/}
                         <Text style={{ textAlign: "center", fontSize: 12, color: "white", fontFamily: "SVN-Gotham", }}>{currentTheme?.miniText}</Text>
 
                         {/* Main Image*/}
-                        <Image resizeMode="contain" style={{ alignSelf: "center", }} source={currentTheme?.imgageSource}></Image>
+                        <Image resizeMode="contain" style={{ height: 300, width: 320, alignSelf: "center", }} source={currentTheme?.imgageSource}></Image>
                         <View style={{ paddingHorizontal: 50 }}>
                             <Text style={{ textAlign: "center", fontSize: 6, color: "white", fontFamily: "SVN-Gotham", fontStyle: "italic" }}>*Mỗi 10 năm. Nguồn: Daly et al., 2013. BMC Geriatrics 13:71</Text>
                             <Text style={{ textAlign: "center", fontSize: 6, color: "white", fontFamily: "SVN-Gotham", fontStyle: "italic" }}>**Mỗi 5-7 năm sau khi mãn kinh. Nguồn: National Osteoporosis Foundation (2009). Hormones and Healthy Bones</Text>
@@ -160,7 +161,7 @@ const PromoScreen: React.FC<PromoScreenProps> = ({ navigation, route }) => {
 
                     {/* Button Section*/}
                     <View style={{ marginTop: 10 }}>
-                        <TouchableOpacity style={{ width: 140, height: 40, borderRadius: 20, backgroundColor: "rgba(183, 0, 2, 1)", justifyContent: "center", alignItems: "center", borderWidth: 1, borderColor: "yellow" }}>
+                        <TouchableOpacity onPress={() => { navigation.navigate("InfoScreen", { pageNumber: 6 }) }} style={{ width: 140, height: 40, borderRadius: 20, backgroundColor: "rgba(183, 0, 2, 1)", justifyContent: "center", alignItems: "center", borderWidth: 1, borderColor: "yellow" }}>
                             <Text style={{ color: "white", fontFamily: "SVN-Gotham", fontSize: 16 }}>{currentTheme?.buttonText}</Text>
                         </TouchableOpacity>
                     </View >

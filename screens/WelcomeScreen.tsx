@@ -77,13 +77,14 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ navigation, route }) => {
                         height: '12%',
                     }}
                 />
-                <TouchableOpacity onPress={() => { navigation.navigate("TestScreen", { pageNumber: 1 }); }}>
-                    <Image style={{ position: 'absolute', left: "20%", bottom: 0 }} source={require('../assets/kiem-tra-ngay-btn.png')}></Image>
+                <TouchableOpacity onPress={() => { navigation.navigate("TestScreen", { pageNumber: 2 }) }} style={{ width: 220, height: 45, borderRadius: 40, backgroundColor: "rgba(183, 0, 2, 1)", borderWidth: 1, borderColor: "yellow", justifyContent: "center", alignItems: "center", position: "absolute", left: "24%", top: "85%" }}>
+                    <Text style={{ color: "white", fontFamily: "SVN-Gotham", fontSize: 18 }}>KIỂM TRA NGAY</Text>
                 </TouchableOpacity>
+
             </View>
 
             <View style={{ marginTop: 10, paddingHorizontal: 10 }}>
-                <Image style={{ alignSelf: "center" }} source={require('../assets/group-icon.png')}></Image>
+                <Image resizeMode='contain' style={{ height: 80, width: 300, alignSelf: "center" }} source={require('../assets/group-icon.png')}></Image>
                 <Text style={{ fontFamily: "SVN-Gotham", fontSize: 10, color: "white", fontStyle: "italic", textAlign: "center", }}>Bài kiểm tra Cơ, Xương, Khớp này được phát triển bởi đội ngũ Anlene</Text>
                 <View style={{ marginTop: 10, paddingHorizontal: 50 }}>
                     <Text style={{ fontFamily: "SVN-Gotham", fontSize: 10, color: "white", fontStyle: "italic", textAlign: "justify" }}>Lưu ý: Bài kiểm tra không dành cho đối tượng đang bị chấn thương hoặc có bệnh lý về cơ, xương, khớp hoặc tiểu đường</Text>

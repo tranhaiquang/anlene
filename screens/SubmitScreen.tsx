@@ -92,7 +92,7 @@ const SubmitScreen: React.FC<SubmitScreenProps> = ({ navigation, route }) => {
 
                     {/* Top Bar */}
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", position: "relative" }}>
-                        <TouchableOpacity onPress={() => { navigation.navigate("TestScreen", { pageNumber: 2 }) }} style={{ position: "absolute", right: 190 }}>
+                        <TouchableOpacity onPress={() => { navigation.goBack() }} style={{ position: "absolute", right: 190 }}>
                             <AntDesign name="left" size={24} color="white"></AntDesign>
                         </TouchableOpacity>
                         <Text style={{ color: "white", fontSize: 14, fontFamily: "SVN-Gotham", textAlign: "center" }}>
@@ -104,8 +104,9 @@ const SubmitScreen: React.FC<SubmitScreenProps> = ({ navigation, route }) => {
 
                     </View>
 
-                    <View style={{ marginTop: 10, marginBottom: 10 }}>
-                        <Image source={require('../assets/anlene-icon.png')}></Image>
+                    {/* Icon */}
+                    <View style={{ marginTop: 10, }}>
+                        <Image resizeMode='contain' style={{ height: 40, width: 120 }} source={require('../assets/anlene-icon.png')}></Image>
                     </View>
 
                     {/* Text Section*/}
@@ -127,12 +128,12 @@ const SubmitScreen: React.FC<SubmitScreenProps> = ({ navigation, route }) => {
                                 </View>
                             </View>
                         </Modal>
-                        <MaskedView maskElement={<Text style={{ textAlign: "center", fontSize: 13, fontFamily: "SVN-Gotham", fontWeight: "bold" }}>HOÀN THÀNH BÀI KIỂM TRA</Text>}>
+                        <MaskedView maskElement={<Text style={{ textAlign: "center", fontSize: 16, fontFamily: "SVN-Gotham", fontWeight: "bold" }}>HOÀN THÀNH BÀI KIỂM TRA</Text>}>
                             <LinearGradient
                                 colors={currentTheme?.headerTextColor}
                                 start={{ x: 0, y: 0 }}
                                 end={{ x: 1, y: 1 }}>
-                                <Text style={{ textAlign: "center", fontSize: 13, fontFamily: "SVN-Gotham", opacity: 0, fontWeight: "bold", marginBottom: 10 }}>HOÀN THÀNH BÀI KIỂM TRA</Text>
+                                <Text style={{ textAlign: "center", fontSize: 16, fontFamily: "SVN-Gotham", opacity: 0, fontWeight: "bold", marginBottom: 10 }}>HOÀN THÀNH BÀI KIỂM TRA</Text>
                             </LinearGradient>
                         </MaskedView>
 

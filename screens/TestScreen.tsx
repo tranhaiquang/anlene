@@ -209,9 +209,10 @@ const TestScreen: React.FC<TestScreenProps> = ({ navigation, route }) => {
                     </LinearGradient>
 
                 </MaskedView>
+
                 {/* Image Section*/}
                 <View>
-                    <Image style={{ alignSelf: "center", borderColor: borderColor, borderWidth: borderColor == "" ? 0 : 2, borderRadius: 10 }} source={exercises[currentStep].image}></Image>
+                    <Image resizeMode='contain' style={{ height: 300, width: 310, alignSelf: "center", borderColor: borderColor, borderWidth: borderColor == "" ? 0 : 2, borderRadius: 10 }} source={exercises[currentStep].image}></Image>
                     <View style={{ position: "absolute", right: -10, top: -10 }}>
                         {
                             borderColor != "" && (
@@ -232,7 +233,7 @@ const TestScreen: React.FC<TestScreenProps> = ({ navigation, route }) => {
                     setBorderColor("green")
                     handleSelection("yes")
                 }} style={{ width: 110, height: 120, borderWidth: isYesBtnClicked == true ? 2 : 0, borderColor: isYesBtnClicked == true ? "yellow" : "", borderRadius: 10, backgroundColor: "rgba(255,255,255,0.3)", justifyContent: "center", alignItems: "center", marginRight: 20 }}>
-                    <Image source={require('../assets/smile-icon.png')}></Image>
+                    <Image resizeMode='contain' style={{ height: 40, width: 40 }} source={require('../assets/smile-icon.png')}></Image>
                     <Text style={{ color: "white", fontFamily: "SVN-Gotham", marginTop: 5 }}>{exercises[currentStep].options[0]}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => {
@@ -241,7 +242,7 @@ const TestScreen: React.FC<TestScreenProps> = ({ navigation, route }) => {
                     setBorderColor("red")
                     handleSelection("no")
                 }} style={{ width: 110, height: 120, borderWidth: isNoBtnClicked == true ? 2 : 0, borderColor: isNoBtnClicked == true ? "yellow" : "", borderRadius: 10, backgroundColor: "rgba(255,255,255,0.3)", justifyContent: "center", alignItems: "center" }}>
-                    <Image source={require('../assets/sad-icon.png')}></Image>
+                    <Image resizeMode='contain' style={{ height: 40, width: 40 }} source={require('../assets/sad-icon.png')}></Image>
                     <Text style={{ color: "white", fontFamily: "SVN-Gotham", marginTop: 5 }}>{exercises[currentStep].options[1]}</Text>
                 </TouchableOpacity>
             </View >
