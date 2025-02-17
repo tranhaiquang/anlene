@@ -15,7 +15,20 @@ const PromoScreen: React.FC<PromoScreenProps> = ({ navigation, route }) => {
         "SVN-Gotham": require("../assets/fonts/SVN-Gotham Regular.otf"),
     });
     const [showHiddenText, setHiddenText] = useState(false)
-    const themes = [
+    type Theme = {
+        name: string;
+        backgroundColor: [string, string, ...string[]];
+        secondaryColor: [string, string, ...string[]];
+        miniText: string;
+        bottomText: string;
+        buttonText: string;
+        headerText: string;
+        headerTextColor: [string, string, ...string[]];
+        bodyText: string;
+        color: string;
+        imageSource: number
+    };
+    const themes: Theme[] = [
         {
             name: "green",
             backgroundColor: ["rgb(15,73,13)", "rgb(28,96,13)", "rgb(38,117,12)", "rgb(28,96,13)", "rgb(15,73,13)"],
@@ -27,7 +40,7 @@ const PromoScreen: React.FC<PromoScreenProps> = ({ navigation, route }) => {
             bottomText: "Cùng Anlene giúp bạn chăm sóc sức khoẻ Cơ-Xương-Khớp ngay hôm nay với Ưu đãi hấp dẫn đang chờ bạn!",
             buttonText: "MUA NGAY",
             color: "yellow",
-            imgageSource: require("../assets/promo-screen-img-green.png")
+            imageSource: require("../assets/promo-screen-img-green.png")
         },
         {
             name: "yellow",
@@ -40,7 +53,7 @@ const PromoScreen: React.FC<PromoScreenProps> = ({ navigation, route }) => {
             bottomText: "Ngay từ bây giờ, cùng Anlene giúp bạn chăm sóc sức khoẻ Cơ-Xương-Khớp ngay hôm nay với Ưu đãi hấp dẫn đang chờ bạn!",
             buttonText: "MUA NGAY",
             color: "green",
-            imgageSource: require("../assets/promo-screen-img-yellow.png")
+            imageSource: require("../assets/promo-screen-img-yellow.png")
 
         },
         {
@@ -54,7 +67,7 @@ const PromoScreen: React.FC<PromoScreenProps> = ({ navigation, route }) => {
             bottomText: "Đừng chậm trễ, cùng Anlene giúp bạn chăm sóc sức khoẻ Cơ-Xương-Khớp ngay hôm nay với Ưu đãi hấp dẫn đang chờ bạn!",
             color: "yellow",
             buttonText: "NHẬN NGAY",
-            imgageSource: require("../assets/promo-screen-img-green.png")
+            imageSource: require("../assets/promo-screen-img-green.png")
 
         }
     ]
@@ -75,7 +88,7 @@ const PromoScreen: React.FC<PromoScreenProps> = ({ navigation, route }) => {
         <SafeAreaView style={{ flex: 1 }}>
             <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1 }}>
                 <LinearGradient
-                    colors={currentTheme?.backgroundColor}
+                    colors={currentTheme?.backgroundColor ?? ["rgb(15, 73, 13)", "rgb(28, 96, 13)", "rgb(38, 117, 12)", "rgb(28, 96, 13)", "rgb(15, 73, 13)"]}
                     locations={[0.1, 0.2, 0.3, 0.8, 0.9]}
                     start={{ x: 0.5, y: 0 }}
                     end={{ x: 0.5, y: 1 }}
@@ -107,7 +120,7 @@ const PromoScreen: React.FC<PromoScreenProps> = ({ navigation, route }) => {
                         {/* Header Text */}
                         <MaskedView maskElement={<Text style={{ textAlign: "center", fontSize: 30, fontFamily: "SVN-Gotham", fontWeight: "bold" }}>{currentTheme?.headerText}</Text>}>
                             <LinearGradient
-                                colors={currentTheme?.headerTextColor}
+                                colors={currentTheme?.headerTextColor ?? ["rgba(186, 135, 44, 1)", "rgba(232, 226, 118, 1)", "rgba(225, 215, 112, 1)", "rgba(186, 135, 44, 1)"]}
                                 start={{ x: 0, y: 0 }}
                                 end={{ x: 1, y: 1 }}>
                                 <Text style={{ textAlign: "center", fontSize: 30, fontFamily: "SVN-Gotham", opacity: 0, fontWeight: "bold", }}>XIN CHÚC MỪNG</Text>
@@ -122,7 +135,7 @@ const PromoScreen: React.FC<PromoScreenProps> = ({ navigation, route }) => {
                         <Text style={{ textAlign: "center", fontSize: 12, color: "white", fontFamily: "SVN-Gotham", }}>{currentTheme?.miniText}</Text>
 
                         {/* Main Image*/}
-                        <Image resizeMode="contain" style={{ height: 300, width: 320, alignSelf: "center", }} source={currentTheme?.imgageSource}></Image>
+                        <Image resizeMode="contain" style={{ height: 300, width: 320, alignSelf: "center", }} source={currentTheme?.imageSource}></Image>
                         <View style={{ paddingHorizontal: 50 }}>
                             <Text style={{ textAlign: "center", fontSize: 6, color: "white", fontFamily: "SVN-Gotham", fontStyle: "italic" }}>*Mỗi 10 năm. Nguồn: Daly et al., 2013. BMC Geriatrics 13:71</Text>
                             <Text style={{ textAlign: "center", fontSize: 6, color: "white", fontFamily: "SVN-Gotham", fontStyle: "italic" }}>**Mỗi 5-7 năm sau khi mãn kinh. Nguồn: National Osteoporosis Foundation (2009). Hormones and Healthy Bones</Text>
@@ -130,7 +143,7 @@ const PromoScreen: React.FC<PromoScreenProps> = ({ navigation, route }) => {
 
                         <MaskedView maskElement={<Text style={{ textAlign: "center", fontSize: 14, fontFamily: "SVN-Gotham", fontWeight: "bold", marginTop: 6 }}>LỰA CHỌN GIÚP CƠ-XƯƠNG-KHỚP CHẮC KHOẺ</Text>}>
                             <LinearGradient
-                                colors={currentTheme?.secondaryColor}
+                                colors={currentTheme?.secondaryColor ?? ["rgba(186, 135, 44, 1)", "rgba(232, 226, 118, 1)", "rgba(225, 215, 112, 1)", "rgba(186, 135, 44, 1)"]}
                                 start={{ x: 0, y: 0 }}
                                 end={{ x: 1, y: 1 }}>
                                 <Text style={{ textAlign: "center", fontSize: 14, fontFamily: "SVN-Gotham", opacity: 0, fontWeight: "bold", marginBottom: 10 }}>LỰA CHỌN GIÚP CƠ-XƯƠNG-KHỚP CHẮC KHOẺ</Text>
@@ -144,7 +157,7 @@ const PromoScreen: React.FC<PromoScreenProps> = ({ navigation, route }) => {
                                 <TouchableOpacity onPress={() => setHiddenText(!showHiddenText)}>
                                     <MaskedView maskElement={<Text style={{ textAlign: "center", fontSize: 12, fontFamily: "SVN-Gotham", marginTop: 6, textDecorationLine: "underline" }}>Xem thêm</Text>}>
                                         <LinearGradient
-                                            colors={currentTheme?.secondaryColor}
+                                            colors={currentTheme?.secondaryColor ?? ["rgba(186, 135, 44, 1)", "rgba(232, 226, 118, 1)", "rgba(225, 215, 112, 1)", "rgba(186, 135, 44, 1)"]}
                                             start={{ x: 0, y: 0 }}
                                             end={{ x: 1, y: 1 }}>
                                             <Text style={{ textAlign: "center", fontSize: 12, fontFamily: "SVN-Gotham", opacity: 0, fontWeight: "bold", marginBottom: 10, textDecorationLine: "underline" }}>Xem thêm</Text>

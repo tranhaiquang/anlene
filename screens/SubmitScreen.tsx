@@ -24,7 +24,16 @@ const SubmitScreen: React.FC<SubmitScreenProps> = ({ navigation, route }) => {
     const [nameInputWarning, setNameInputWarning] = useState("")
     const [phoneInputWarning, setPhoneInputWarning] = useState("")
     const [isModalVisible, setModalVisible] = useState(false)
-    const themes = [
+
+    type Theme = {
+        name: string;
+        backgroundColor: [string, string, ...string[]];
+        headerText: string;
+        headerTextColor: [string, string, ...string[]];
+        bodyText: string;
+        color: string;
+    };
+    const themes: Theme[] = [
         {
             name: "green",
             backgroundColor: ['rgb(15,73,13)', 'rgb(28,96,13)', 'rgb(38,117,12)', 'rgb(28,96,13)', 'rgb(15,73,13)'],
@@ -84,7 +93,7 @@ const SubmitScreen: React.FC<SubmitScreenProps> = ({ navigation, route }) => {
         <SafeAreaView style={{ flex: 1 }}>
             <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1 }}>
                 <LinearGradient
-                    colors={currentTheme?.backgroundColor}
+                    colors={currentTheme?.backgroundColor ?? ['rgb(15,73,13)', 'rgb(28,96,13)', 'rgb(38,117,12)', 'rgb(28,96,13)', 'rgb(15,73,13)']}
                     locations={[0.1, 0.2, 0.3, 0.8, 0.9]}
                     start={{ x: 0.5, y: 0 }}
                     end={{ x: 0.5, y: 1 }}
@@ -130,7 +139,7 @@ const SubmitScreen: React.FC<SubmitScreenProps> = ({ navigation, route }) => {
                         </Modal>
                         <MaskedView maskElement={<Text style={{ textAlign: "center", fontSize: 16, fontFamily: "SVN-Gotham", fontWeight: "bold" }}>HOÀN THÀNH BÀI KIỂM TRA</Text>}>
                             <LinearGradient
-                                colors={currentTheme?.headerTextColor}
+                                colors={currentTheme?.headerTextColor ?? ['rgba(186, 135, 44, 1)', 'rgba(232, 226, 118, 1)', 'rgba(225, 215, 112, 1)', 'rgba(186, 135, 44, 1)']}
                                 start={{ x: 0, y: 0 }}
                                 end={{ x: 1, y: 1 }}>
                                 <Text style={{ textAlign: "center", fontSize: 16, fontFamily: "SVN-Gotham", opacity: 0, fontWeight: "bold", marginBottom: 10 }}>HOÀN THÀNH BÀI KIỂM TRA</Text>
@@ -139,7 +148,7 @@ const SubmitScreen: React.FC<SubmitScreenProps> = ({ navigation, route }) => {
 
                         <MaskedView maskElement={<Text style={{ textAlign: "center", fontSize: 30, fontFamily: "SVN-Gotham", fontWeight: "bold" }}>{currentTheme?.headerText}</Text>}>
                             <LinearGradient
-                                colors={currentTheme?.headerTextColor}
+                                colors={currentTheme?.headerTextColor ?? ['rgba(186, 135, 44, 1)', 'rgba(232, 226, 118, 1)', 'rgba(225, 215, 112, 1)', 'rgba(186, 135, 44, 1)']}
                                 start={{ x: 0, y: 0 }}
                                 end={{ x: 1, y: 1 }}>
                                 <Text style={{ textAlign: "center", fontSize: 30, fontFamily: "SVN-Gotham", opacity: 0, fontWeight: "bold", marginBottom: 10 }}>XIN CHÚC MỪNG</Text>
