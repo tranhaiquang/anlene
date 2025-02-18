@@ -19,7 +19,6 @@ const TestScreen: React.FC<TestScreenProps> = ({ navigation, route }) => {
     const [isNoBtnClicked, setNoBtnClick] = useState(false)
     const [borderColor, setBorderColor] = useState("")
     const [isModalVisible, setModalVisible] = useState(false);
-
     const exercises = [
         {
             title: "KIỂM TRA CƠ",

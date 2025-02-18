@@ -9,7 +9,7 @@ import Entypo from 'react-native-vector-icons/Entypo'
 import { SubmitScreenProps } from '../navigation/types';
 import Checkbox from 'expo-checkbox';
 import Modal from 'react-native-modal';
-
+import { addUser } from '../firebase/firebaseService'
 SplashScreen.preventAutoHideAsync();
 
 const SubmitScreen: React.FC<SubmitScreenProps> = ({ navigation, route }) => {
@@ -18,12 +18,13 @@ const SubmitScreen: React.FC<SubmitScreenProps> = ({ navigation, route }) => {
     });
 
     const [checked, setChecked] = useState(false);
-    const [name, setName] = useState("")
-    const [phone, setPhone] = useState("")
     const [email, setEmail] = useState("")
+    const [phone, setPhone] = useState("")
+    const [fullName, setFullName] = useState("")
     const [nameInputWarning, setNameInputWarning] = useState("")
     const [phoneInputWarning, setPhoneInputWarning] = useState("")
     const [isModalVisible, setModalVisible] = useState(false)
+    const [message, setMessage] = useState("");
 
     type Theme = {
         name: string;
@@ -62,7 +63,7 @@ const SubmitScreen: React.FC<SubmitScreenProps> = ({ navigation, route }) => {
     const currentTheme = themes.find(t => t.name === route.params.theme)
 
     const validateNameInput = (text: string) => {
-        setName(text);
+        setFullName(text);
         if (text.trim() === "") {
             setNameInputWarning("Vui lòng nhập họ và tên");
         } else {
@@ -74,10 +75,29 @@ const SubmitScreen: React.FC<SubmitScreenProps> = ({ navigation, route }) => {
         setPhone(text);
         if (text.trim() === "") {
             setPhoneInputWarning("Vui lòng nhập số điện thoại");
-        } else {
+        } else if (text.length != 10) {
+            setPhoneInputWarning("Số điện thoại phải có 10 số");
+        }
+        else {
             setPhoneInputWarning("");
         }
     };
+
+    const validateEmailInput = (text: string) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (emailRegex.test(text)) {
+            setEmail("")
+        }
+    }
+
+    const handleSubmit = async () => {
+        try {
+            const docId = await addUser({ fullName, phone, email });
+            setMessage(`User added with ID: ${docId}`);
+        } catch (error) {
+            setMessage("Error adding user.");
+        }
+    }
 
     useEffect(() => {
         if (loaded || error) {
@@ -88,6 +108,7 @@ const SubmitScreen: React.FC<SubmitScreenProps> = ({ navigation, route }) => {
     if (!loaded && !error) {
         return null;
     }
+
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -155,7 +176,7 @@ const SubmitScreen: React.FC<SubmitScreenProps> = ({ navigation, route }) => {
                             </LinearGradient>
 
                         </MaskedView>
-                        <Text style={{ textAlign: "center", fontSize: 15, color: "white", fontFamily: "SVN-Gotham", marginTop: 10 }}>{currentTheme?.bodyText}</Text>
+                        <Text style={{ textAlign: "center", fontSize: 15, color: "white", fontFamily: "SVN-Gotham", }}>{currentTheme?.bodyText}</Text>
                         <Text style={{ textAlign: "center", fontSize: 18, color: "white", fontFamily: "SVN-Gotham", marginTop: 10 }}>Điền thông tin bên dưới để xem đầy đủ kết quả và nhận ngay Voucher ưu đãi lên đến 100.000đ từ Anlene.</Text>
 
                     </View>
@@ -174,7 +195,7 @@ const SubmitScreen: React.FC<SubmitScreenProps> = ({ navigation, route }) => {
                         </View>
                         <View style={{ marginTop: 20 }}>
                             <Text style={{ color: "white", fontSize: 13, fontFamily: "SVN-Gotham", fontWeight: "bold", marginLeft: 2 }}>Email:</Text>
-                            <TextInput placeholder='Nhập email' placeholderTextColor={'rgb(201,201,201)'} style={{ borderWidth: 1, borderRadius: 10, borderColor: "white", backgroundColor: "white", width: 320, paddingHorizontal: 10, marginTop: 10 }}></TextInput>
+                            <TextInput placeholder='Nhập email' onChangeText={validateEmailInput} placeholderTextColor={'rgb(201,201,201)'} style={{ borderWidth: 1, borderRadius: 10, borderColor: "white", backgroundColor: "white", width: 320, paddingHorizontal: 10, marginTop: 10 }}></TextInput>
                         </View>
                         <View style={{ marginTop: 10, flexDirection: "row", justifyContent: "space-between" }}>
                             <Checkbox value={checked} onValueChange={() => setChecked(!checked)} />
@@ -188,7 +209,10 @@ const SubmitScreen: React.FC<SubmitScreenProps> = ({ navigation, route }) => {
 
                     {/* Submit Button Section*/}
                     <View style={{ marginTop: 20 }}>
-                        <TouchableOpacity onPress={() => { navigation.navigate("PromoScreen", { pageNumber: 4, theme: "green" }) }} disabled={!name || !phone || !checked} style={{ width: 140, height: 40, borderRadius: 20, backgroundColor: name && phone && checked ? 'rgba(183, 0, 2, 1)' : "gray", justifyContent: "center", alignItems: "center" }}>
+                        <TouchableOpacity onPress={() => {
+                            navigation.navigate("PromoScreen", { pageNumber: 4, theme: "green" })
+                            handleSubmit()
+                        }} disabled={!fullName || !phone || !checked} style={{ width: 140, height: 40, borderRadius: 20, backgroundColor: fullName && phone && checked ? 'rgba(183, 0, 2, 1)' : "gray", justifyContent: "center", alignItems: "center" }}>
                             <Text style={{ color: "white", fontFamily: "SVN-Gotham" }}>HOÀN THÀNH</Text>
                         </TouchableOpacity>
                     </View >

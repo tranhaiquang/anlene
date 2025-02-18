@@ -14,7 +14,7 @@ const Stack = createStackNavigator<RootStackParamList>();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="WelcomeScreen">
+      <Stack.Navigator initialRouteName="SubmitScreen">
         <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} options={{ headerShown: false }} initialParams={{ pageNumber: 1 }} />
         <Stack.Screen name="TestScreen" component={TestScreen} options={{ headerShown: false }} initialParams={{ pageNumber: 2 }} />
         <Stack.Screen name="SubmitScreen" component={SubmitScreen} options={{ headerShown: false }} initialParams={{ pageNumber: 3, theme: "green" }} />
