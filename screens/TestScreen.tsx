@@ -8,7 +8,9 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 import Entypo from 'react-native-vector-icons/Entypo'
 import { TestScreenProps } from '../navigation/types';
 import Modal from 'react-native-modal';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../store';
+import { setPage } from '../features/navigationSlice';
 SplashScreen.preventAutoHideAsync();
 
 const TestScreen: React.FC<TestScreenProps> = ({ navigation, route }) => {
@@ -19,6 +21,8 @@ const TestScreen: React.FC<TestScreenProps> = ({ navigation, route }) => {
     const [isNoBtnClicked, setNoBtnClick] = useState(false)
     const [borderColor, setBorderColor] = useState("")
     const [isModalVisible, setModalVisible] = useState(false);
+    const dispatch = useDispatch();
+    const currentPage = useSelector((state: RootState) => state.navigation.currentPage);
     const exercises = [
         {
             title: "KIỂM TRA CƠ",
@@ -70,7 +74,8 @@ const TestScreen: React.FC<TestScreenProps> = ({ navigation, route }) => {
         setModalVisible(false)
         const count = progress.filter(item => item.context === "no").length; // count number of exercises the user can't do
         const theme = count > 1 ? "gray" : count === 1 ? "yellow" : "green";
-        navigation.navigate("SubmitScreen", { pageNumber: 3, theme: theme });
+        dispatch(setPage(currentPage + 1))
+        navigation.navigate("SubmitScreen", { pageNumber: currentPage, theme: theme });
     }
     const handleSelection = (choice: "yes" | "no") => {
         setTimeout(() => {
@@ -100,19 +105,24 @@ const TestScreen: React.FC<TestScreenProps> = ({ navigation, route }) => {
         let newProgress = [...progress];
         newProgress[currentStep] = {
             context: (currentStep + 1).toString(),
-            title: newProgress[currentStep].title
+            title: newProgress[currentStep].title,
         };
-        if (currentStep < exercises.length - 1) {
+        if (currentStep > 0) {
             newProgress[currentStep - 1] = {
                 context: "waiting",
-                title: newProgress[currentStep + 1].title
+                title: newProgress[currentStep - 1].title,
             };
             setBorderColor("");
             setYesBtnClick(false);
             setNoBtnClick(false);
+            setCurrentStep(currentStep - 1);
+
+        } else {
+            dispatch(setPage(currentPage - 1));
+            navigation.navigate("WelcomeScreen", { pageNumber: currentPage });
         }
-        setCurrentStep(currentStep - 1);
         setProgress(newProgress);
+
     }
     useEffect(() => {
         if (loaded || error) {
@@ -136,10 +146,7 @@ const TestScreen: React.FC<TestScreenProps> = ({ navigation, route }) => {
             {/* Top Bar */}
             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", position: "relative" }}>
                 <TouchableOpacity onPress={() => {
-                    if (currentStep == 0)
-                        navigation.navigate("WelcomeScreen", { pageNumber: 1 })
-                    else
-                        handleBack()
+                    handleBack()
                 }} style={{ position: "absolute", right: 190 }}>
                     <AntDesign name="left" size={24} color="white"></AntDesign>
                 </TouchableOpacity>
@@ -147,7 +154,7 @@ const TestScreen: React.FC<TestScreenProps> = ({ navigation, route }) => {
                     <Entypo name="home" color="white" size={24}></Entypo>
                 </TouchableOpacity>
                 <Text style={{ color: "white", fontSize: 14, fontFamily: "SVN-Gotham", textAlign: "center" }}>
-                    {"<"} Trang {route.params.pageNumber}/6 {">"}
+                    {"<"} Trang {currentPage}/6 {">"}
                 </Text>
             </View>
 

@@ -4,10 +4,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { StackScreenProps } from "@react-navigation/stack";
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import MaskedView from '@react-native-masked-view/masked-view';
 import { InfoScreenProps, RootStackParamList } from '../navigation/types';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import Entypo from 'react-native-vector-icons/Entypo'
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../store';
+import { setPage } from '../features/navigationSlice';
 type Props = StackScreenProps<RootStackParamList, "InfoScreen">;
 SplashScreen.preventAutoHideAsync();
 
@@ -15,7 +17,8 @@ const InfoScreen: React.FC<InfoScreenProps> = ({ navigation, route }) => {
     const [loaded, error] = useFonts({
         'SVN-Gotham': require('../assets/fonts/SVN-Gotham Regular.otf'),
     });
-
+    const dispatch = useDispatch();
+    const currentPage = useSelector((state: RootState) => state.navigation.currentPage);
     useEffect(() => {
         if (loaded || error) {
             SplashScreen.hideAsync();
@@ -38,14 +41,18 @@ const InfoScreen: React.FC<InfoScreenProps> = ({ navigation, route }) => {
                     {/* Top Bar */}
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", position: "relative" }}>
                         <TouchableOpacity onPress={() => {
+                            dispatch(setPage(currentPage - 1))
                             navigation.goBack()
                         }} style={{ position: "absolute", right: 190 }}>
                             <AntDesign name="left" size={24} color="white"></AntDesign>
                         </TouchableOpacity>
                         <Text style={{ color: "white", fontSize: 14, fontFamily: "SVN-Gotham", textAlign: "center" }}>
-                            {"<"} Trang {route.params.pageNumber}/6 {">"}
+                            {"<"} Trang {currentPage}/6 {">"}
                         </Text>
-                        <TouchableOpacity onPress={() => { navigation.navigate("WelcomeScreen", { pageNumber: 1 }) }} style={{ position: "absolute", left: 190 }}>
+                        <TouchableOpacity onPress={() => {
+                            dispatch(setPage(1))
+                            navigation.navigate("WelcomeScreen", { pageNumber: currentPage })
+                        }} style={{ position: "absolute", left: 190 }}>
                             <Entypo name="home" color="white" size={24}></Entypo>
                         </TouchableOpacity>
                     </View>
@@ -79,11 +86,6 @@ const InfoScreen: React.FC<InfoScreenProps> = ({ navigation, route }) => {
                         <Image resizeMode='contain' style={{ width: 300, height: 200 }} source={require('../assets/info-screen-box2.png')}></Image>
                         <Image resizeMode='contain' style={{ width: 300, height: 200 }} source={require('../assets/info-screen-box3.png')}></Image>
                     </View>
-
-
-
-
-
                 </LinearGradient >
             </ScrollView>
         </SafeAreaView >

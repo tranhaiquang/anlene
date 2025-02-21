@@ -1,16 +1,20 @@
 import React, { useEffect } from 'react'
 import { Text, View, Image, TouchableOpacity, } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient';
-import { StackScreenProps } from "@react-navigation/stack";
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import MaskedView from '@react-native-masked-view/masked-view';
-import { RootStackParamList } from '../navigation/types';
 import { WelcomeScreenProps } from '../navigation/types';
-type Props = StackScreenProps<RootStackParamList, "WelcomeScreen">;
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../store';
+import { setPage } from '../features/navigationSlice';
+
 SplashScreen.preventAutoHideAsync();
 
 const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ navigation, route }) => {
+
+    const dispatch = useDispatch();
+    const currentPage = useSelector((state: RootState) => state.navigation.currentPage);
     const [loaded, error] = useFonts({
         'SVN-Gotham': require('../assets/fonts/SVN-Gotham Regular.otf'),
     });
@@ -35,7 +39,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ navigation, route }) => {
 
             {/* Top Bar */}
             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", position: "relative" }}>
-                <Text style={{ alignItems: "center", color: "white", fontSize: 14, fontFamily: "SVN-Gotham" }}>{"<"} Trang {route.params.pageNumber}/6 {">"}</Text>
+                <Text style={{ alignItems: "center", color: "white", fontSize: 14, fontFamily: "SVN-Gotham" }}>{"<"} Trang {currentPage}/6 {">"}</Text>
                 <Image style={{ width: 80, resizeMode: "contain", position: "absolute", right: 20 }} source={require('../assets/anlene-icon.png')}></Image>
             </View>
 
@@ -77,7 +81,10 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ navigation, route }) => {
                         height: '12%',
                     }}
                 />
-                <TouchableOpacity onPress={() => { navigation.navigate("TestScreen", { pageNumber: 2 }) }} style={{ width: 220, height: 45, borderRadius: 40, backgroundColor: "rgba(183, 0, 2, 1)", borderWidth: 1, borderColor: "yellow", justifyContent: "center", alignItems: "center", position: "absolute", left: "24%", top: "85%" }}>
+                <TouchableOpacity onPress={() => {
+                    dispatch(setPage(currentPage + 1));
+                    navigation.navigate("TestScreen", { pageNumber: currentPage });
+                }} style={{ width: 220, height: 45, borderRadius: 40, backgroundColor: "rgba(183, 0, 2, 1)", borderWidth: 1, borderColor: "yellow", justifyContent: "center", alignItems: "center", position: "absolute", left: "24%", top: "85%" }}>
                     <Text style={{ color: "white", fontFamily: "SVN-Gotham", fontSize: 18 }}>KIỂM TRA NGAY</Text>
                 </TouchableOpacity>
 

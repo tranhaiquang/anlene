@@ -10,14 +10,18 @@ import { SubmitScreenProps } from '../navigation/types';
 import Checkbox from 'expo-checkbox';
 import Modal from 'react-native-modal';
 import { addUser } from '../firebase/firebaseService'
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../store';
+import { setPage } from '../features/navigationSlice';
 SplashScreen.preventAutoHideAsync();
 
 const SubmitScreen: React.FC<SubmitScreenProps> = ({ navigation, route }) => {
     const [loaded, error] = useFonts({
         'SVN-Gotham': require('../assets/fonts/SVN-Gotham Regular.otf'),
     });
-
-    const [checked, setChecked] = useState(false);
+    const dispatch = useDispatch();
+    const currentPage = useSelector((state: RootState) => state.navigation.currentPage);
+    const [checked, setChecked] = useState(false)
     const [email, setEmail] = useState("")
     const [phone, setPhone] = useState("")
     const [fullName, setFullName] = useState("")
@@ -85,9 +89,7 @@ const SubmitScreen: React.FC<SubmitScreenProps> = ({ navigation, route }) => {
 
     const validateEmailInput = (text: string) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (emailRegex.test(text)) {
-            setEmail("")
-        }
+        emailRegex.test(text) ? setEmail(text) : setEmail("")
     }
 
     const handleSubmit = async () => {
@@ -122,11 +124,14 @@ const SubmitScreen: React.FC<SubmitScreenProps> = ({ navigation, route }) => {
 
                     {/* Top Bar */}
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", position: "relative" }}>
-                        <TouchableOpacity onPress={() => { navigation.goBack() }} style={{ position: "absolute", right: 190 }}>
+                        <TouchableOpacity onPress={() => {
+                            dispatch(setPage(currentPage - 1))
+                            navigation.goBack()
+                        }} style={{ position: "absolute", right: 190 }}>
                             <AntDesign name="left" size={24} color="white"></AntDesign>
                         </TouchableOpacity>
                         <Text style={{ color: "white", fontSize: 14, fontFamily: "SVN-Gotham", textAlign: "center" }}>
-                            {"<"} Trang {route.params.pageNumber}/6 {">"}
+                            {"<"} Trang {currentPage}/6 {">"}
                         </Text>
                         <TouchableOpacity onPress={() => { setModalVisible(true) }} style={{ position: "absolute", left: 190 }}>
                             <Entypo name="home" color="white" size={24}></Entypo>
@@ -139,7 +144,7 @@ const SubmitScreen: React.FC<SubmitScreenProps> = ({ navigation, route }) => {
                         <Image resizeMode='contain' style={{ height: 40, width: 120 }} source={require('../assets/anlene-icon.png')}></Image>
                     </View>
 
-                    {/* Text Section*/}
+                    {/* Text Section */}
                     <View style={{ marginTop: 10, }}>
                         <Modal isVisible={isModalVisible} onBackdropPress={() => setModalVisible(false)}>
                             <View style={{ justifyContent: "center", alignItems: "center", backgroundColor: "white", padding: 20, borderRadius: 10 }}>
@@ -151,7 +156,8 @@ const SubmitScreen: React.FC<SubmitScreenProps> = ({ navigation, route }) => {
                                     </TouchableOpacity>
                                     <TouchableOpacity onPress={() => {
                                         setModalVisible(false)
-                                        navigation.navigate("WelcomeScreen", { pageNumber: 1 })
+                                        dispatch(setPage(1))
+                                        navigation.navigate("WelcomeScreen", { pageNumber: currentPage })
                                     }} style={{ width: 120, height: 40, borderRadius: 20, backgroundColor: "rgb(183,0,2)", justifyContent: "center", alignItems: "center" }}>
                                         <Text style={{ color: "white", fontFamily: "SVN-Gotham" }}>ĐỒNG Ý</Text>
                                     </TouchableOpacity>
@@ -210,8 +216,9 @@ const SubmitScreen: React.FC<SubmitScreenProps> = ({ navigation, route }) => {
                     {/* Submit Button Section*/}
                     <View style={{ marginTop: 20 }}>
                         <TouchableOpacity onPress={() => {
-                            navigation.navigate("PromoScreen", { pageNumber: 4, theme: "green" })
-                            handleSubmit()
+                            dispatch(setPage(currentPage + 1))
+                            navigation.navigate("PromoScreen", { pageNumber: currentPage, theme: "green" })
+                            //handleSubmit()
                         }} disabled={!fullName || !phone || !checked} style={{ width: 140, height: 40, borderRadius: 20, backgroundColor: fullName && phone && checked ? 'rgba(183, 0, 2, 1)' : "gray", justifyContent: "center", alignItems: "center" }}>
                             <Text style={{ color: "white", fontFamily: "SVN-Gotham" }}>HOÀN THÀNH</Text>
                         </TouchableOpacity>

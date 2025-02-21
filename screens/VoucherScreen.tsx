@@ -1,21 +1,24 @@
 import React, { useEffect } from 'react'
 import { Text, View, Image, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient';
-import { StackScreenProps } from "@react-navigation/stack";
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import MaskedView from '@react-native-masked-view/masked-view';
-import { RootStackParamList } from '../navigation/types';
 import { VoucherScreenProps } from '../navigation/types';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import Entypo from 'react-native-vector-icons/Entypo'
-type Props = StackScreenProps<RootStackParamList, "WelcomeScreen">;
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../store';
+import { setPage } from '../features/navigationSlice';
 SplashScreen.preventAutoHideAsync();
 
 const VoucherScreen: React.FC<VoucherScreenProps> = ({ navigation, route }) => {
     const [loaded, error] = useFonts({
         'SVN-Gotham': require('../assets/fonts/SVN-Gotham Regular.otf'),
     });
+
+    const dispatch = useDispatch();
+    const currentPage = useSelector((state: RootState) => state.navigation.currentPage);
 
     useEffect(() => {
         if (loaded || error) {
@@ -39,22 +42,27 @@ const VoucherScreen: React.FC<VoucherScreenProps> = ({ navigation, route }) => {
                     {/* Top Bar */}
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", position: "relative" }}>
                         <TouchableOpacity onPress={() => {
+                            dispatch(setPage(currentPage - 1))
                             navigation.goBack()
                         }} style={{ position: "absolute", right: 190 }}>
                             <AntDesign name="left" size={24} color="white"></AntDesign>
                         </TouchableOpacity>
                         <Text style={{ color: "white", fontSize: 14, fontFamily: "SVN-Gotham", textAlign: "center" }}>
-                            {"<"} Trang {route.params.pageNumber}/6 {">"}
+                            {"<"} Trang {currentPage}/6 {">"}
                         </Text>
-                        <TouchableOpacity onPress={() => { navigation.navigate("WelcomeScreen", { pageNumber: 1 }) }} style={{ position: "absolute", left: 190 }}>
+                        <TouchableOpacity onPress={() => {
+                            dispatch(setPage(1))
+                            navigation.navigate("WelcomeScreen", { pageNumber: currentPage })
+                        }} style={{ position: "absolute", left: 190 }}>
                             <Entypo name="home" color="white" size={24}></Entypo>
                         </TouchableOpacity>
                     </View>
 
                     {/* Icon */}
                     <View style={{ marginTop: 10, }}>
-                        <Image source={require('../assets/anlene-icon.png')}></Image>
+                        <Image resizeMode='contain' style={{ height: 40, width: 120 }} source={require('../assets/anlene-icon.png')}></Image>
                     </View>
+
                     <View style={{ marginTop: 20, paddingHorizontal: 18 }}>
                         <MaskedView maskElement={<Text style={{ textAlign: "center", fontSize: 22, fontFamily: "SVN-Gotham", fontWeight: "bold" }}>CHĂM SÓC CƠ-XƯƠNG-KHỚP</Text>}>
                             <LinearGradient
@@ -130,7 +138,10 @@ const VoucherScreen: React.FC<VoucherScreenProps> = ({ navigation, route }) => {
                         <TouchableOpacity style={{ width: 180, height: 50, borderRadius: 40, backgroundColor: "rgba(183, 0, 2, 1)", justifyContent: "center", alignItems: "center", }}>
                             <Text style={{ color: "white", fontFamily: "SVN-Gotham", fontSize: 18 }}>MUA NGAY</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={{ width: 180, height: 40, borderRadius: 20, backgroundColor: "white", justifyContent: "center", alignItems: "center", borderWidth: 2, borderColor: "rgb(115,164,66)" }}>
+                        <TouchableOpacity onPress={() => {
+                            dispatch(setPage(currentPage + 1))
+                            navigation.navigate("InfoScreen", { pageNumber: currentPage })
+                        }} style={{ width: 180, height: 40, borderRadius: 20, backgroundColor: "white", justifyContent: "center", alignItems: "center", borderWidth: 2, borderColor: "rgb(115,164,66)" }}>
                             <Text style={{ color: "rgb(115,164,66)", fontFamily: "SVN-Gotham", fontSize: 16 }}>Tìm hiểu ngay</Text>
                         </TouchableOpacity>
                     </View>
